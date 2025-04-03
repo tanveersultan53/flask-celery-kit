@@ -37,7 +37,7 @@ This project is a fully Dockerized Flask backend with:
 
 1. Clone the repository
 
-    git clone https://github.com/your-user/your-repo.git
+    git clone https://github.com/tanveersultan53/flask-celery-kit
     cd your-repo
 
 2. Set up environment variables (.env):
