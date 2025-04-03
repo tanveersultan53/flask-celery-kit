@@ -1,0 +1,50 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+
+  redis:
+    image: redis:alpine
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    command: ["postgres", "-c", "password_encryption=md5"]
+
+
+  worker:
+    build: .
+    command: celery -A app.tasks worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build: .
+    command: flower --app=app.tasks --port=5555
+    entrypoint: ""  
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - worker
+
+volumes:
+  pgdata:
